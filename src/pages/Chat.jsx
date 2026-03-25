@@ -10,7 +10,13 @@ const Chat = () => {
 
   const handleRequestMic = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+      await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true
+        } 
+      });
       setHasMicPermission(true);
       setIsRecording(true);
       setHistory(prev => [...prev, { role: 'system', text: 'Microphone connected. Initializing Agent...' }]);
