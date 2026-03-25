@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { initElevenLabsAgent, endConversation } from '../services/elevenlabsAPI';
+import { initElevenLabsAgent, endConversation, setMicVolume } from '../services/elevenlabsAPI';
 
 const Chat = () => {
   const navigate = useNavigate();
   const [hasMicPermission, setHasMicPermission] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [history, setHistory] = useState([]);
+  const [isMuted, setIsMuted] = useState(false);
 
   const handleRequestMic = async () => {
     try {
@@ -53,6 +54,12 @@ const Chat = () => {
     setHistory(prev => [...prev, { role: 'system', text: 'Conversation Ended.' }]);
   };
 
+  const toggleMute = async () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    await setMicVolume(newMutedState ? 0 : 1);
+  };
+
   const handleBack = async () => {
     if (isRecording) {
       await handleEndConv();
@@ -80,23 +87,44 @@ const Chat = () => {
         )}
       </div>
 
-      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
-        {!hasMicPermission ? (
-          <button 
-            onClick={handleRequestMic}
-            style={{ padding: '12px 24px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}
-          >
-            Allow Microphone & Start
-          </button>
-        ) : (
-          <button 
-            onClick={handleEndConv}
-            disabled={!isRecording}
-            style={{ padding: '12px 24px', backgroundColor: isRecording ? '#F44336' : '#ccc', color: 'white', border: 'none', borderRadius: '8px', cursor: isRecording ? 'pointer' : 'not-allowed', fontSize: '16px' }}
-          >
-            End Conversation
-          </button>
-        )}
+      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
+          {isRecording && (
+            <button 
+              onClick={toggleMute}
+              title={isMuted ? "Unmute Microphone" : "Mute Microphone"}
+              style={{
+                width: '45px', height: '45px', borderRadius: '50%', border: 'none',
+                backgroundColor: isMuted ? '#f44336' : '#eee', color: isMuted ? 'white' : '#333',
+                fontSize: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              {isMuted ? '🔇' : '🎤'}
+            </button>
+          )}
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          {!hasMicPermission ? (
+            <button 
+              onClick={handleRequestMic}
+              style={{ padding: '12px 24px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}
+            >
+              Allow Microphone & Start
+            </button>
+          ) : (
+            <button 
+              onClick={handleEndConv}
+              disabled={!isRecording}
+              style={{ padding: '12px 24px', backgroundColor: isRecording ? '#F44336' : '#ccc', color: 'white', border: 'none', borderRadius: '8px', cursor: isRecording ? 'pointer' : 'not-allowed', fontSize: '16px' }}
+            >
+              End Conversation
+            </button>
+          )}
+        </div>
+
+        <div style={{ flex: 1 }}></div>
       </div>
     </div>
   );

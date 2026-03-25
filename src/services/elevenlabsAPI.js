@@ -44,3 +44,13 @@ export const endConversation = async () => {
     conversationInst = null;
   }
 };
+
+export const setMicVolume = async (volumeLevel) => {
+  if (conversationInst) {
+    try {
+      await conversationInst.setVolume({ microphone: volumeLevel });
+    } catch (e) {
+      console.warn("Failed to set mic volume", e);
+    }
+  }
+};
