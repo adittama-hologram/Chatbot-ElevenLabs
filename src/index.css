@@ -1,12 +1,258 @@
 :root {
-  --primary-orange: #FFA500;
-  --secondary-white: #FFFFFF;
-  --bg-color: #FAFAFA;
-  --text-dark: #333333;
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+    "Source Han Sans CN", sans-serif;
 }
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-dark);
+  background-color: #000;
+  overflow: hidden;
+}
+
+.main-container {
+  overflow: hidden;
+}
+
+.main-container,
+.main-container * {
+  box-sizing: border-box;
+}
+
+input,
+select,
+textarea,
+button {
+  outline: 0;
+}
+
+.main-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.top-app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 24px;
+  z-index: 12;
+}
+.container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 12px;
+  position: relative;
+  z-index: 13;
+}
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  z-index: 14;
+}
+.ignite-fy-logos {
+  width: 306px;
+  height: 99px;
+  background: url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-03-27/eA9A5u4ko5.png)
+    no-repeat center;
+  background-size: contain;
+  z-index: 15;
+}
+.overlay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  top: 18%;
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 16;
+  border-radius: 9999px;
+}
+.background {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  z-index: 17;
+  border-radius: 9999px;
+}
+.live-session {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: Manrope, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  white-space: nowrap;
+  z-index: 18;
+}
+.container-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  z-index: 2;
+}
+.concentric-rings {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 3;
+  border-radius: 9999px;
+}
+.border {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 4;
+  border-radius: 9999px;
+}
+.border-2 {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 5;
+  border-radius: 9999px;
+}
+.pulse-effects {
+  position: absolute;
+  width: 208px;
+  height: 208px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 122, 47, 0.3);
+  filter: blur(20px);
+  z-index: 6;
+  border-radius: 9999px;
+}
+.microphone-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 7;
+  border-radius: 9999px;
+  backdrop-filter: blur(20px);
+  position: relative;
+}
+.microphone-button-shadow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  top: 50%;
+  left: 50%;
+  background: rgba(255, 255, 255, 0);
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  border-radius: 9999px;
+  box-shadow: 0 25px 50px 0 rgba(0, 0, 0, 0.25);
+}
+.gradient-blur {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-03-27/u3hA5P5obu.png)
+    no-repeat center;
+  background-size: cover;
+  filter: blur(8px);
+  z-index: 9;
+  border-radius: 9999px;
+}
+.overlay-border-overlayblur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 114px;
+  height: 114px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 10;
+  border-radius: 9999px;
+  backdrop-filter: blur(6px);
+  position: relative;
+}
+.icon {
+  width: 35px;
+  height: 47.5px;
+  background: url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-03-27/jCpvtOLkP4.png)
+    no-repeat center;
+  background-size: cover;
+  z-index: 11;
+}
+.ai-status-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 75%;
+  z-index: 19;
+}
+.overlay-overlayblur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 20;
+  border-radius: 9999px;
+  backdrop-filter: blur(6px);
+}
+.tap-to-start {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: Manrope, var(--default-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: 1.4px;
+  z-index: 21;
+}
+.orange-blades {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  background: url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-03-27/M0q1VM1Zfg.png)
+    no-repeat center;
+  background-size: cover;
+  transform: translate(-50%, -50%);
+  z-index: -1;
 }
