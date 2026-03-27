@@ -1,6 +1,3 @@
-# Agent state
-.agent/
-
 # dependencies
 /node_modules
 /.pnp
