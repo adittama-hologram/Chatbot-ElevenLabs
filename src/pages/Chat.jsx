@@ -26,11 +26,17 @@ const Chat = () => {
   };
 
   const handleRequestMic = async () => {
+    // Check for Secure Context (HTTPS is mandatory for mic access on mobile)
+    if (!window.isSecureContext) {
+      alert("Microphone access requires a secure connection (HTTPS). If you are testing locally, please use localhost or a secure tunnel (like ngrok).");
+      return;
+    }
+
     try {
-      await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
-          noiseSuppression: true,
           echoCancellation: true,
+          noiseSuppression: true,
           autoGainControl: true
         } 
       });
@@ -41,10 +47,14 @@ const Chat = () => {
         import.meta.env.VITE_ELEVENLABS_AGENT_ID, 
         import.meta.env.VITE_ELEVENLABS_API_KEY,
         {
+          stream,
           onConnect: () => {},
           onDisconnect: () => setIsRecording(false),
           onMessage: (msg) => {},
-          onError: () => setIsRecording(false)
+          onError: (err) => {
+            console.error(err);
+            setIsRecording(false);
+          }
         }
       );
 
@@ -53,7 +63,8 @@ const Chat = () => {
          alert("Failed to connect. Please check your Agent ID.");
       }
     } catch (err) {
-      alert("Microphone permission denied.");
+      console.error(err);
+      alert(`Microphone error: ${err.message || "Permission denied"}. Please ensure you have given microphone access in your browser settings and are using HTTPS.`);
     }
   };
 
@@ -91,7 +102,7 @@ const Chat = () => {
         <div className="microphone-button" onClick={toggleAction} style={{ cursor: 'pointer' }}>
           <div className="microphone-button-shadow"></div>
           <div className="gradient-blur"></div>
-          <div className={`overlay-border-overlayblur ${isRecording ? 'pulse-animate' : ''}`}>
+          <div className="overlay-border-overlayblur">
             <div className={`icon ${isRecording ? 'icon-listening' : ''}`}></div>
           </div>
         </div>

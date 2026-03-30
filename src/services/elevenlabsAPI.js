@@ -2,18 +2,21 @@ import { Conversation } from '@elevenlabs/client';
 
 let conversationInst = null;
 
-export const initElevenLabsAgent = async (agentId, apiKey, callbacks) => {
+export const initElevenLabsAgent = async (agentId, apiKey, options) => {
   if (!agentId) {
     console.warn("Missing ElevenLabs Agent ID.");
     return false;
   }
   
   try {
-    const { onConnect, onDisconnect, onError, onMessage } = callbacks || {};
+    const { onConnect, onDisconnect, onError, onMessage, stream } = options || {};
     
     // Start session using the official ElevenLabs Conversational AI SDK
     conversationInst = await Conversation.startSession({
       agentId: agentId,
+      audioDescription: {
+        stream: stream // Pass existing stream if available
+      },
       onConnect: () => {
         if (onConnect) onConnect();
       },
@@ -26,7 +29,16 @@ export const initElevenLabsAgent = async (agentId, apiKey, callbacks) => {
       },
       onMessage: (message) => {
         console.log("ElevenLabs msg:", message);
-        // SDK typically returns object with source ('ai' or 'user') and message
+        
+        // If the message is from the AI, it's likely starting to speak.
+        // We can temporarily lower the mic volume to prevent echo feedback
+        // if the device hardware doesn't handle it well.
+        if (message.source === 'ai') {
+           setMicVolume(0.1); // Lower mic sensitivity during AI speech
+           // Restore after a delay (this is a simple heuristic since SDK doesn't expose speech end)
+           setTimeout(() => setMicVolume(1.0), 5000); 
+        }
+        
         if (onMessage) onMessage(message);
       }
     });
