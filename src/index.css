@@ -284,3 +284,33 @@ button {
   /* This filter turns a white icon into red #FF4B4B or similar */
   filter: invert(37%) sepia(93%) saturate(6445%) hue-rotate(352deg) brightness(108%) contrast(105%);
 }
+
+.fullscreen-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.fullscreen-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  border-color: #ff7a2f;
+}
+
+.fullscreen-button svg {
+  width: 24px;
+  height: 24px;
+}
