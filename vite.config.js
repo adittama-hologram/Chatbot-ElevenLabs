@@ -9,6 +9,7 @@ export default defineConfig({
     host: '0.0.0.0',
     strictPort: true,
     cors: true,
+    allowedHosts: true, // Required for Vite 6+ to allow custom domains
     hmr: false, // Disable HMR entirely for stability on remote custom domains
   },
 })
