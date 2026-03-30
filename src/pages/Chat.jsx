@@ -61,13 +61,17 @@ const Chat = () => {
       
       <div className="container-1">
         <div className="concentric-rings"></div>
-        <div className="border"></div>
-        <div className="border-2"></div>
+        {isRecording && (
+          <>
+            <div className="border pulse-animate"></div>
+            <div className="border-2 pulse-animate-delayed"></div>
+          </>
+        )}
         {isRecording && <div className="pulse-effects"></div>}
         <div className="microphone-button" onClick={toggleAction} style={{ cursor: 'pointer' }}>
           <div className="microphone-button-shadow"></div>
           <div className="gradient-blur"></div>
-          <div className="overlay-border-overlayblur"><div className="icon"></div></div>
+          <div className="overlay-border-overlayblur"><div className={`icon ${isRecording ? 'icon-listening' : ''}`}></div></div>
         </div>
       </div>
       

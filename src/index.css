@@ -256,3 +256,31 @@ button {
   transform: translate(-50%, -50%);
   z-index: -1;
 }
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+.pulse-animate {
+  animation: pulse-ring 2s infinite ease-in-out;
+}
+
+.pulse-animate-delayed {
+  animation: pulse-ring 2s infinite ease-in-out 1s;
+}
+
+.icon-listening {
+  /* This filter turns a white icon into red #FF4B4B or similar */
+  filter: invert(37%) sepia(93%) saturate(6445%) hue-rotate(352deg) brightness(108%) contrast(105%);
+}
