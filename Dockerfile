@@ -4,5 +4,5 @@ COPY package*.json ./
 # Run npm install if package.json exists
 RUN if [ -f package.json ]; then npm install; fi
 COPY . .
-EXPOSE 3000
+EXPOSE 4000
 CMD ["npm", "run", "dev", "--", "--host"]
