@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { initElevenLabsAgent, endConversation } from '../services/elevenlabsAPI';
+import React, { useState, useEffect, useRef } from 'react';
+import { initElevenLabsAgent, endConversation, setMicVolume } from '../services/elevenlabsAPI';
+import askMeImage from '../resources/Ask Me!.png';
+import listeningImage from '../resources/Listerning.png';
+import waveformImage from '../resources/Waveform.png';
 
 const Chat = () => {
   const [hasMicPermission, setHasMicPermission] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const streamRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const silenceTimeoutRef = useRef(null);
+  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -40,8 +47,10 @@ const Chat = () => {
           autoGainControl: true
         } 
       });
+      streamRef.current = stream;
       setHasMicPermission(true);
       setIsRecording(true);
+      setIsMuted(false);
       
       const success = await initElevenLabsAgent(
         import.meta.env.VITE_ELEVENLABS_AGENT_ID, 
@@ -50,6 +59,9 @@ const Chat = () => {
           stream,
           onConnect: () => {},
           onDisconnect: () => setIsRecording(false),
+          onModeChange: (info) => {
+            setIsAiSpeaking(info.mode === 'speaking');
+          },
           onMessage: (msg) => {},
           onError: (err) => {
             console.error(err);
@@ -73,7 +85,46 @@ const Chat = () => {
     await endConversation();
   };
 
-  const toggleAction = isRecording ? handleEndConv : handleRequestMic;
+  const handleToggleMute = async () => {
+    const newMuteState = !isMuted;
+    
+    // 1. Force explicitly mute ALL media tracks in our local browser stream
+    if (streamRef.current) {
+      streamRef.current.getAudioTracks().forEach(track => {
+        track.enabled = !newMuteState;
+      });
+    }
+
+    // 2. Synchronize UI State
+    setIsMuted(newMuteState);
+    
+    // 3. Actively mandate the ElevenLabs internal engine to cut its mic inputs
+    await setMicVolume(newMuteState ? 0 : 1);
+  };
+
+  useEffect(() => {
+    if (isRecording && isMuted && !isAiSpeaking) {
+      silenceTimeoutRef.current = setTimeout(async () => {
+        setIsRecording(false);
+        setIsMuted(false);
+        setIsAiSpeaking(false);
+        await endConversation();
+      }, 15000);
+    } else {
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+        silenceTimeoutRef.current = null;
+      }
+    }
+
+    return () => {
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+    };
+  }, [isRecording, isMuted, isAiSpeaking]);
+
+  const toggleAction = isRecording ? handleToggleMute : handleRequestMic;
 
   return (
     <div className="main-container">
@@ -82,28 +133,25 @@ const Chat = () => {
           <div className="heading"><div className="ignite-fy-logos"></div></div>
         </div>
       </div>
-      
-      {isRecording && (
-        <div className="overlay">
-          <div className="background"></div>
-          <span className="live-session">LIVE SESSION</span>
-        </div>
-      )}
-      
+
+      <div className="ask-me-container" style={{ position: 'absolute', top: '22%', left: '50%', transform: 'translateX(-50%)', zIndex: 15 }}>
+        <img src={askMeImage} alt="Ask Me!" style={{ maxWidth: '45vw', maxHeight: '6vh' }} />
+      </div>
+
       <div className="container-1">
         <div className="concentric-rings"></div>
-        {isRecording && (
+        {isRecording && isAiSpeaking && (
           <>
             <div className="border pulse-animate"></div>
             <div className="border-2 pulse-animate-delayed"></div>
           </>
         )}
-        {isRecording && <div className="pulse-effects"></div>}
+        {isRecording && isAiSpeaking && <div className="pulse-effects"></div>}
         <div className="microphone-button" onClick={toggleAction} style={{ cursor: 'pointer' }}>
           <div className="microphone-button-shadow"></div>
           <div className="gradient-blur"></div>
           <div className="overlay-border-overlayblur">
-            <div className={`icon ${isRecording ? 'icon-listening' : ''}`}></div>
+            <div className={`icon ${isRecording && !isMuted ? 'icon-listening' : ''}`} style={isMuted ? { opacity: 0.4 } : {}}></div>
           </div>
         </div>
       </div>
@@ -112,6 +160,21 @@ const Chat = () => {
         <div className="ai-status-label">
           <div className="overlay-overlayblur" onClick={toggleAction} style={{ cursor: 'pointer' }}>
             <span className="tap-to-start">TAP TO START</span>
+          </div>
+        </div>
+      )}
+
+      {isRecording && !isMuted && (
+        <div className="active-listening-container" style={{ position: 'absolute', top: '63%', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 19, gap: '20px' }}>
+          <img src={listeningImage} alt="Listening..." style={{ maxWidth: '80vw', maxHeight: '14vh' }} />
+          <div className="css-waveform">
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
           </div>
         </div>
       )}
